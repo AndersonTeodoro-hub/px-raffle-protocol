@@ -3,15 +3,11 @@ export default function AppPage() {
       <main className="min-h-screen bg-black text-white px-6 py-12">
         <div className="max-w-6xl mx-auto space-y-12">
   
-          {/* Header */}
-          <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          {/* Header - REMOVIDO o botão duplicado */}
+          <header className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
               PX Raffle Protocol
             </h1>
-  
-            <button className="px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-200 transition">
-              Connect Wallet
-            </button>
           </header>
   
           {/* Status Card */}
@@ -52,4 +48,3 @@ export default function AppPage() {
       </main>
     );
   }
-  
