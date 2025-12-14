@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center bg-black text-white">
@@ -11,10 +13,12 @@ export default function Home() {
         Provably fair. Fully transparent. Ready for institutions.
       </p>
 
-      <div className="flex gap-4 mb-16">
-        <button className="px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-200 transition">
-          Launch App
-        </button>
+      <div className="flex gap-4">
+        <Link href="/app">
+          <button className="px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-200 transition">
+            Launch App
+          </button>
+        </Link>
 
         <button className="px-6 py-3 rounded-xl border border-zinc-700 text-white hover:bg-zinc-900 transition">
           Read Documentation
