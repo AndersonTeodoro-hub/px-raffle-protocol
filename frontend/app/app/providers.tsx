@@ -43,52 +43,61 @@ export function Web3Provider({ children }: { children: ReactNode }) {
       });
       
       // Pega a rede atual
-      const currentChainId = await window.ethereum.request({
+      let currentChainId = await window.ethereum.request({
         method: 'eth_chainId',
       });
 
-      setAddress(accounts[0]);
-      setChainId(currentChainId);
-
-      // Verifica se está no Arbitrum
+      // Verifica se está no Arbitrum ANTES de conectar
       if (currentChainId !== ARBITRUM_CHAIN_ID) {
         const shouldSwitch = confirm(
           'Você não está conectado à rede Arbitrum. Deseja trocar?'
         );
         
-        if (shouldSwitch) {
-          try {
-            await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: ARBITRUM_CHAIN_ID }],
-            });
-          } catch (switchError: any) {
-            // Erro 4902 significa que a rede não está adicionada
-            if (switchError.code === 4902) {
-              try {
-                await window.ethereum.request({
-                  method: 'wallet_addEthereumChain',
-                  params: [
-                    {
-                      chainId: ARBITRUM_CHAIN_ID,
-                      chainName: 'Arbitrum One',
-                      nativeCurrency: {
-                        name: 'ETH',
-                        symbol: 'ETH',
-                        decimals: 18,
-                      },
-                      rpcUrls: ['https://arb1.arbitrum.io/rpc'],
-                      blockExplorerUrls: ['https://arbiscan.io'],
+        if (!shouldSwitch) {
+          alert('Conexão cancelada. É necessário estar na rede Arbitrum One.');
+          return;
+        }
+        
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: ARBITRUM_CHAIN_ID }],
+          });
+          currentChainId = ARBITRUM_CHAIN_ID;
+        } catch (switchError: any) {
+          // Erro 4902 significa que a rede não está adicionada
+          if (switchError.code === 4902) {
+            try {
+              await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [
+                  {
+                    chainId: ARBITRUM_CHAIN_ID,
+                    chainName: 'Arbitrum One',
+                    nativeCurrency: {
+                      name: 'ETH',
+                      symbol: 'ETH',
+                      decimals: 18,
                     },
-                  ],
-                });
-              } catch (addError) {
-                console.error('Erro ao adicionar rede Arbitrum:', addError);
-              }
+                    rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+                    blockExplorerUrls: ['https://arbiscan.io'],
+                  },
+                ],
+              });
+              currentChainId = ARBITRUM_CHAIN_ID;
+            } catch (addError) {
+              console.error('Erro ao adicionar rede Arbitrum:', addError);
+              return;
             }
+          } else {
+            return;
           }
         }
       }
+
+      // SÓ conecta após verificar/trocar rede
+      setAddress(accounts[0]);
+      setChainId(currentChainId);
     } catch (error: any) {
       if (error.code === 4001) {
         alert('Conexão rejeitada pelo usuário');
